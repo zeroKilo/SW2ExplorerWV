@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace SW2ExplorerWV
 {
@@ -119,6 +121,37 @@ namespace SW2ExplorerWV
                 if (bytesread < size && size - bytesread < bytestoread)
                     bytestoread = (int)(size - bytesread);
             }
+        }
+
+        public static string pathgame = "";
+
+        public static bool FindExeLocation()
+        {
+            if (pathgame != "")
+                return true;
+            string keyName = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 324800";
+            string valueName = "InstallLocation";
+            try
+            {
+                using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+                using (var key = hklm.OpenSubKey(keyName))
+                {
+                    pathgame = (string)key.GetValue(valueName) + "\\";
+                    return true;
+                }
+            }                
+            catch (Exception)
+            {
+                return false;
+            }
+            OpenFileDialog d = new OpenFileDialog();
+            d.Filter = "ShadowWarrior2.exe|ShadowWarrior2.exe";
+            d.FileName = "ShadowWarrior2.exe";
+            if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                Helper.pathgame = Path.GetDirectoryName(d.FileName) + "\\";
+            else
+                return false;
+            return true;
         }
     }
 }

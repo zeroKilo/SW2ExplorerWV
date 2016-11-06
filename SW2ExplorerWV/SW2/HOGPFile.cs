@@ -41,7 +41,7 @@ namespace SW2ExplorerWV
         public List<ushort> blockSizeMap;
         public string filename;
 
-        public HOGPFile(string path)
+        public HOGPFile(string path, bool silent = false)
         {
             filelist = new List<FileEntry>();
             filename = path;
@@ -49,14 +49,14 @@ namespace SW2ExplorerWV
             UInt64 magic = Helper.ReadU64(fs);
             if (magic != 0x350474F48)
                 throw new Exception("not a HOGP3 file!");
-            Helper.Log("Magic ok");
+            if(!silent) Helper.Log("Magic ok");
             UInt64 datasize = Helper.ReadU64(fs);
-            Helper.Log("Datasize: " + datasize.ToString("X") + "h bytes");
+            if (!silent) Helper.Log("Datasize: " + datasize.ToString("X") + "h bytes");
             fs.Seek((long)datasize, SeekOrigin.Current);
             UInt32 tocsize = Helper.ReadU32(fs);
-            Helper.Log("TOC size " + tocsize.ToString("X") + "h bytes");
+            if (!silent) Helper.Log("TOC size " + tocsize.ToString("X") + "h bytes");
             UInt32 filecount = Helper.ReadU32(fs);
-            Helper.Log("Found " + filecount + " files");
+            if (!silent) Helper.Log("Found " + filecount + " files");
             filelist = new List<FileEntry>();
             for (int i = 0; i < filecount; i++)
             {

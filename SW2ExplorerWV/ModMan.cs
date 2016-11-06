@@ -8,13 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Win32;
 
 namespace SW2ExplorerWV
 {
     public partial class ModMan : Form
     {
-        public string pathgame = "";
         public ModMan()
         {
             InitializeComponent();
@@ -116,27 +114,6 @@ namespace SW2ExplorerWV
 
         }
 
-        private bool FindExeLocation()
-        {
-            if (pathgame != "")
-                return true;
-            string keyName = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 324800";
-            string valueName = "InstallLocation";
-            try
-            {
-                using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
-                using (var key = hklm.OpenSubKey(keyName))
-                {
-                    pathgame = (string)key.GetValue(valueName) + "\\";
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         private void executeSelectedJobToolStripMenuItem_Click(object sender, EventArgs e)
         {
             
@@ -149,22 +126,14 @@ namespace SW2ExplorerWV
             foreach (Mod mod in ModManager.modlist)
                 if (mod._filename == name && mod._infilename == inname)
                 {
-                    if (!FindExeLocation())
-                    {
-                        OpenFileDialog d = new OpenFileDialog();
-                        d.Filter = "ShadowWarrior2.exe|ShadowWarrior2.exe";
-                        d.FileName = "ShadowWarrior2.exe";
-                        if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                            pathgame = Path.GetDirectoryName(d.FileName) + "\\";
-                        else
-                            return;
-                    }
-                    if (!File.Exists(pathgame + name))
+                    if (!Helper.FindExeLocation())
+                        return;
+                    if (!File.Exists(Helper.pathgame + name))
                     {
                         Helper.Log("File \"" + name + "\" not found!");
                         return;
                     }
-                    HOGPFile hogp = new HOGPFile(pathgame + name);
+                    HOGPFile hogp = new HOGPFile(Helper.pathgame + name);
                     for (int i = 0; i < hogp.filelist.Count; i++)
                     {
                         HOGPFile.FileEntry en = hogp.filelist[i];
@@ -189,22 +158,14 @@ namespace SW2ExplorerWV
                 if (mod._filename == name)
                 {
                     string inname = mod._infilename;
-                    if (!FindExeLocation())
-                    {
-                        OpenFileDialog d = new OpenFileDialog();
-                        d.Filter = "ShadowWarrior2.exe|ShadowWarrior2.exe";
-                        d.FileName = "ShadowWarrior2.exe";
-                        if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                            pathgame = Path.GetDirectoryName(d.FileName) + "\\";
-                        else
-                            return;
-                    }
-                    if (!File.Exists(pathgame + name))
+                    if (!Helper.FindExeLocation())
+                        return;
+                    if (!File.Exists(Helper.pathgame + name))
                     {
                         Helper.Log("File \"" + name + "\" not found!");
                         return;
                     }
-                    HOGPFile hogp = new HOGPFile(pathgame + name);
+                    HOGPFile hogp = new HOGPFile(Helper.pathgame + name);
                     for (int i = 0; i < hogp.filelist.Count; i++)
                     {
                         HOGPFile.FileEntry en = hogp.filelist[i];
@@ -222,22 +183,15 @@ namespace SW2ExplorerWV
                 {
                     string name = mod._filename;
                     string inname = mod._infilename;
-                    if (!FindExeLocation())
-                    {
-                        OpenFileDialog d = new OpenFileDialog();
-                        d.Filter = "ShadowWarrior2.exe|ShadowWarrior2.exe";
-                        d.FileName = "ShadowWarrior2.exe";
-                        if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                            pathgame = Path.GetDirectoryName(d.FileName) + "\\";
-                        else
-                            return;
-                    }
-                    if (!File.Exists(pathgame + name))
+                    if (!Helper.FindExeLocation())
+                        return;
+
+                    if (!File.Exists(Helper.pathgame + name))
                     {
                         Helper.Log("File \"" + name + "\" not found!");
                         return;
                     }
-                    HOGPFile hogp = new HOGPFile(pathgame + name);
+                    HOGPFile hogp = new HOGPFile(Helper.pathgame + name);
                     for (int i = 0; i < hogp.filelist.Count; i++)
                     {
                         HOGPFile.FileEntry en = hogp.filelist[i];
